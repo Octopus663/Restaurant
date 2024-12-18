@@ -87,7 +87,7 @@ app.delete('/dishes/:id', (req, res) => {
         res.json({ message: 'Страву видалено' });
     });
 });
-app.get('/dishes', (req, res) => {
+app.get('/', (req, res) => {
     connection.query('SELECT * FROM dishes', (err, results) => {
         if (err) {
             return res.status(500).send(err.message);
