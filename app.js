@@ -81,7 +81,14 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
+app.get('/dishes', async (req, res) => {
+    try {
+        const dishes = await Dish.find();
+        res.json(dishes);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 // *** CRUD для Страв ***
 app.get('/dishes/:id', async (req, res) => {
     try {
