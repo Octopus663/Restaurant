@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { authenticateToken, authorizeAdmin } = require('./auth');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
@@ -44,6 +45,7 @@ app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 // Запуск сервера
 app.listen(port, () => {
