@@ -89,7 +89,7 @@ app.get('/dishes', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-// *** CRUD для Страв ***
+
 app.get('/dishes/:id', async (req, res) => {
     try {
         const dish = await Dish.findById(req.params.id);
