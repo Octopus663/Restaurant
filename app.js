@@ -32,7 +32,10 @@ const dishSchema = new mongoose.Schema({
 
 const orderSchema = new mongoose.Schema({
     customer_name: { type: String, required: true },
-    order_details: { type: String, required: true },
+    dishes: [{
+        dish_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Dish', required: true },
+        quantity: { type: Number, required: true }
+    }],
     status: { type: String, required: true, default: 'pending', enum: ['pending', 'confirmed', 'closed'] },
 });
 
@@ -141,8 +144,20 @@ app.delete('/dishes/:id', async (req, res) => {
 // *** CRUD для Замовлень ***
 app.post('/orders', authenticateToken, async (req, res) => {
     try {
-        const { customer_name, order_details } = req.body;
-        const newOrder = new Order({ customer_name, order_details });
+        const { customer_name, dishes } = req.body;
+        if (!Array.isArray(dishes) || dishes.length === 0) {
+            return res.status(400).json({ error: 'Масив страв обов\'язковий і не може бути порожнім' });
+        }
+
+        const orderDishes = await Promise.all(dishes.map(async (dish) => {
+            const foundDish = await Dish.findById(dish.dish_id);
+            if (!foundDish) {
+                throw new Error(`Страву з ID ${dish.dish_id} не знайдено`);
+            }
+            return { dish_id: foundDish._id, quantity: dish.quantity };
+        }));
+
+        const newOrder = new Order({ customer_name, dishes: orderDishes });
         await newOrder.save();
         res.json(newOrder);
     } catch (err) {
